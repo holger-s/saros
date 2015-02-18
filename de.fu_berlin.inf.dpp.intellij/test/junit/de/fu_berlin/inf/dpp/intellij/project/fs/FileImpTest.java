@@ -26,6 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import de.fu_berlin.inf.dpp.filesystem.IFile;
+import org.apache.commons.io.FilenameUtils;
 import org.easymock.EasyMock;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -118,15 +119,17 @@ public class FileImpTest {
     public void testMove() throws Exception {
         IFile file = createTestFile();
         String oldPath = file.getFullPath().toPortableString();
-        String newFilePath = folder.getRoot().getPath() + PathImp.FILE_SEPARATOR
-            + TEST_PROJECT_NAME + PathImp.FILE_SEPARATOR + "newFileName.txt";
+        String newFilePath = FilenameUtils.separatorsToUnix(
+            folder.getRoot().getPath() + PathImp.FILE_SEPARATOR
+                + TEST_PROJECT_NAME + PathImp.FILE_SEPARATOR + "newFileName.txt"
+        );
         PathImp destination = new PathImp(newFilePath);
 
         file.move(destination, false);
 
         assertTrue(!new File(oldPath).exists());
         assertTrue(file.exists());
-        assertEquals(file.getFullPath().toPortableString(), newFilePath);
+        assertEquals(newFilePath, file.getFullPath().toPortableString());
         assertTrue(new File(newFilePath).exists());
     }
 
